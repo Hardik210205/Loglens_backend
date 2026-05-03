@@ -55,7 +55,7 @@ builder.Services.AddCors(options =>
     {
         var allowedOrigins = builder.Configuration
             .GetSection("AllowedOrigins")
-            .Get<string[]>() ?? [];
+            .Get<string[]>() ?? new string[] { };
 
         policy.WithOrigins(allowedOrigins)
               .AllowAnyHeader()
