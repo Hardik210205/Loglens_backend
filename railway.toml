@@ -1,6 +1,6 @@
 [build]
 builder = "nixpacks"
-buildCommand = "dotnet publish API/LogLens.API.csproj -c Release -o out"
+buildCommand = "dotnet restore API/LogLens.API.csproj && dotnet publish API/LogLens.API.csproj -c Release -o out"
 
 [deploy]
 startCommand = "cd out && dotnet LogLens.API.dll"
