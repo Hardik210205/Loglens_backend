@@ -19,13 +19,24 @@ namespace LogLens.API.Middleware
 
         public async Task InvokeAsync(HttpContext context)
         {
-            if (!context.Request.Path.StartsWithSegments("/api/logs"))
+            // Only enforce API key on ingestion endpoint
+            // All other /api/logs/* routes (stats, risk, heatmap, etc.) use JWT auth
+            var path = context.Request.Path.Value ?? string.Empty;
+            var method = context.Request.Method;
+
+            bool isIngestionRoute =
+                path.StartsWith("/api/logs/ingest", StringComparison.OrdinalIgnoreCase) ||
+                (path.Equals("/api/logs", StringComparison.OrdinalIgnoreCase) && method == "POST");
+
+            if (!isIngestionRoute)
             {
                 await _next(context);
                 return;
             }
 
-            if (!context.Request.Headers.TryGetValue("X-Api-Key", out var apiKeyValues) || string.IsNullOrWhiteSpace(apiKeyValues.ToString()))
+            // From here: validate API key for ingestion
+            if (!context.Request.Headers.TryGetValue("X-Api-Key", out var apiKeyValues) ||
+                string.IsNullOrWhiteSpace(apiKeyValues.ToString()))
             {
                 context.Response.StatusCode = StatusCodes.Status401Unauthorized;
                 context.Response.ContentType = "application/json";
