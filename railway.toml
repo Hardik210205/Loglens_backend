@@ -1,9 +1,9 @@
 [build]
 builder = "nixpacks"
-buildCommand = "dotnet restore LogLens.sln && dotnet publish API/LogLens.API.csproj -c Release -o out"
+buildCommand = "dotnet restore LogLens.sln && dotnet publish API/LogLens.API.csproj -c Release -o out --runtime linux-x64 --self-contained true"
 
 [deploy]
-startCommand = "cd out && dotnet LogLens.API.dll"
+startCommand = "cd out && ./LogLens.API"
 healthcheckPath = "/health"
 healthcheckTimeout = 30
 restartPolicyType = "on_failure"
