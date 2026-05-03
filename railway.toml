@@ -1,7 +1,9 @@
-[phases.build]
-cmds = [
-  "dotnet publish API/LogLens.API.csproj -c Release -o out"
-]
+[build]
+builder = "nixpacks"
+buildCommand = "dotnet publish API/LogLens.API.csproj -c Release -o out"
 
-[start]
-cmd = "cd out && dotnet LogLens.API.dll"
+[deploy]
+startCommand = "cd out && dotnet LogLens.API.dll"
+healthcheckPath = "/health"
+healthcheckTimeout = 30
+restartPolicyType = "on_failure"
