@@ -1,9 +1,0 @@
-[build]
-builder = "nixpacks"
-buildCommand = "bash build.sh"
-
-[deploy]
-startCommand = "dotnet out/LogLens.API.dll"
-healthcheckPath = "/health"
-healthcheckTimeout = 60
-restartPolicyType = "on_failure"

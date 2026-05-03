@@ -54,8 +54,9 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowFrontend", policy =>
     {
         var allowedOrigins = builder.Configuration
-            .GetSection("AllowedOrigins")
-            .Get<string[]>() ?? new string[] { };
+              .GetSection("AllowedOrigins")
+              .Get<string[]>() 
+              ?? new[] { "https://loglens-frontend.vercel.app" };
 
         policy.WithOrigins(allowedOrigins)
               .AllowAnyHeader()

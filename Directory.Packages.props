@@ -1,9 +1,0 @@
-<Project>
-  <PropertyGroup>
-    <ManagePackageVersionsCentrally>false</ManagePackageVersionsCentrally>
-  </PropertyGroup>
-  <ItemGroup>
-    <PackageReference Update="Microsoft.Extensions.Diagnostics.Abstractions" Version="8.0.0" />
-    <PackageReference Update="Microsoft.Extensions.Diagnostics" Version="8.0.0" />
-  </ItemGroup>
-</Project>
