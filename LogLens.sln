@@ -1,0 +1,46 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LogLens.API", "API\LogLens.API.csproj", "{48992592-126B-40CD-B1F8-92CB452C4B53}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LogLens.Application", "Application\LogLens.Application.csproj", "{138E7D96-9A64-4E0D-B6A4-195D3E16D8F3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LogLens.Domain", "Domain\LogLens.Domain.csproj", "{D8BFD2AF-7E65-4497-A71D-7432ED56CB00}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LogLens.Infrastructure", "Infrastructure\LogLens.Infrastructure.csproj", "{A6C2EBA4-8B7D-4E19-A7FD-DB8F44AC1468}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LogLens.ML", "ML\LogLens.ML.csproj", "{C73FC11C-6047-40C2-B28C-A30989727612}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{48992592-126B-40CD-B1F8-92CB452C4B53}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{48992592-126B-40CD-B1F8-92CB452C4B53}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{48992592-126B-40CD-B1F8-92CB452C4B53}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{48992592-126B-40CD-B1F8-92CB452C4B53}.Release|Any CPU.Build.0 = Release|Any CPU
+		{138E7D96-9A64-4E0D-B6A4-195D3E16D8F3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{138E7D96-9A64-4E0D-B6A4-195D3E16D8F3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{138E7D96-9A64-4E0D-B6A4-195D3E16D8F3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{138E7D96-9A64-4E0D-B6A4-195D3E16D8F3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D8BFD2AF-7E65-4497-A71D-7432ED56CB00}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D8BFD2AF-7E65-4497-A71D-7432ED56CB00}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D8BFD2AF-7E65-4497-A71D-7432ED56CB00}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D8BFD2AF-7E65-4497-A71D-7432ED56CB00}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A6C2EBA4-8B7D-4E19-A7FD-DB8F44AC1468}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A6C2EBA4-8B7D-4E19-A7FD-DB8F44AC1468}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A6C2EBA4-8B7D-4E19-A7FD-DB8F44AC1468}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A6C2EBA4-8B7D-4E19-A7FD-DB8F44AC1468}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C73FC11C-6047-40C2-B28C-A30989727612}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C73FC11C-6047-40C2-B28C-A30989727612}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C73FC11C-6047-40C2-B28C-A30989727612}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C73FC11C-6047-40C2-B28C-A30989727612}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
