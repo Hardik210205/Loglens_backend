@@ -1,0 +1,7 @@
+[phases.build]
+cmds = [
+  "dotnet publish API/LogLens.API.csproj -c Release -o out"
+]
+
+[start]
+cmd = "cd out && dotnet LogLens.API.dll"
