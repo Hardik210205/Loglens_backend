@@ -1,0 +1,11 @@
+D:\.NET_Project\Loglens\backend\Domain\bin\Debug\net9.0\LogLens.Domain.deps.json
+D:\.NET_Project\Loglens\backend\Domain\bin\Debug\net9.0\LogLens.Domain.dll
+D:\.NET_Project\Loglens\backend\Domain\bin\Debug\net9.0\LogLens.Domain.pdb
+D:\.NET_Project\Loglens\backend\Domain\obj\Debug\net9.0\LogLens.Domain.GeneratedMSBuildEditorConfig.editorconfig
+D:\.NET_Project\Loglens\backend\Domain\obj\Debug\net9.0\LogLens.Domain.AssemblyInfoInputs.cache
+D:\.NET_Project\Loglens\backend\Domain\obj\Debug\net9.0\LogLens.Domain.AssemblyInfo.cs
+D:\.NET_Project\Loglens\backend\Domain\obj\Debug\net9.0\LogLens.Domain.csproj.CoreCompileInputs.cache
+D:\.NET_Project\Loglens\backend\Domain\obj\Debug\net9.0\LogLens.Domain.dll
+D:\.NET_Project\Loglens\backend\Domain\obj\Debug\net9.0\refint\LogLens.Domain.dll
+D:\.NET_Project\Loglens\backend\Domain\obj\Debug\net9.0\LogLens.Domain.pdb
+D:\.NET_Project\Loglens\backend\Domain\obj\Debug\net9.0\ref\LogLens.Domain.dll

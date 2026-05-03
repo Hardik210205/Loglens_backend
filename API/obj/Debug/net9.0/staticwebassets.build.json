@@ -1,0 +1,12 @@
+{
+  "Version": 1,
+  "Hash": "pLj2nlI4MPkRh57ZZbFFAxibMq7vXz1XVo5Tjp3JaAE=",
+  "Source": "LogLens.API",
+  "BasePath": "_content/LogLens.API",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": [],
+  "Endpoints": []
+}
