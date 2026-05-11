@@ -11,5 +11,6 @@ namespace LogLens.Application.Interfaces
         Task<List<UserDto>> GetAllUsersAsync();
         Task<bool> UpdateUserRoleAsync(Guid userId, UserRole newRole);
         Task<bool> DeactivateUserAsync(Guid userId);
+        Task<bool> DeleteUserAsync(Guid userId);
     }
 }

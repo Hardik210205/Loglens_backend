@@ -16,5 +16,8 @@ namespace LogLens.Domain.Entities
         public bool IsActive { get; set; } = true;
 
         public Service? Service { get; set; }
+        
+        public Guid? TenantId { get; set; }
+        public Tenant? Tenant { get; set; }
     }
 }

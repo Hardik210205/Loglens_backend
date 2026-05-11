@@ -17,5 +17,8 @@ namespace LogLens.Domain.Entities
         public Incident? Incident { get; set; }
         public Guid? ServiceId { get; set; }
         public Service? Service { get; set; }
+        
+        public Guid? TenantId { get; set; }
+        public Tenant? Tenant { get; set; }
     }
 }

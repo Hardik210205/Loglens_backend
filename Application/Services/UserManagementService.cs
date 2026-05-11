@@ -69,5 +69,29 @@ namespace LogLens.Application.Services
             await _dbContext.SaveChangesAsync();
             return true;
         }
+
+        public async Task<bool> DeleteUserAsync(Guid userId)
+        {
+            var user = await _dbContext.Set<User>().FirstOrDefaultAsync(u => u.Id == userId);
+            if (user == null)
+            {
+                return false;
+            }
+
+            if (user.Role == UserRole.Admin)
+            {
+                var activeAdminCount = await _dbContext.Set<User>()
+                    .CountAsync(u => u.Role == UserRole.Admin);
+
+                if (activeAdminCount <= 1)
+                {
+                    return false; // Cannot delete the last admin
+                }
+            }
+
+            _dbContext.Set<User>().Remove(user);
+            await _dbContext.SaveChangesAsync();
+            return true;
+        }
     }
 }

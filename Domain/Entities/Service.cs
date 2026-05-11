@@ -12,6 +12,9 @@ namespace LogLens.Domain.Entities
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public bool IsActive { get; set; } = true;
 
+        public Guid? TenantId { get; set; }
+        public Tenant? Tenant { get; set; }
+
         public User? CreatedBy { get; set; }
         public ICollection<ApiKey> ApiKeys { get; set; } = new List<ApiKey>();
         public ICollection<LogEntry> Logs { get; set; } = new List<LogEntry>();

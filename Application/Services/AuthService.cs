@@ -19,11 +19,13 @@ namespace LogLens.Application.Services
     {
         private readonly IConfiguration _configuration;
         private readonly DbContext _dbContext;
+        private readonly ITenantContext _tenantContext;
 
-        public AuthService(IConfiguration configuration, DbContext dbContext)
+        public AuthService(IConfiguration configuration, DbContext dbContext, ITenantContext tenantContext)
         {
             _configuration = configuration;
             _dbContext = dbContext;
+            _tenantContext = tenantContext;
         }
 
         public async Task<AuthResult> RegisterAsync(string email, string password, UserRole role)
@@ -41,8 +43,31 @@ namespace LogLens.Application.Services
                 return Fail("An account with this email already exists.");
             }
 
-            var isFirstUser = !await users.AnyAsync();
-            var effectiveRole = isFirstUser ? UserRole.Admin : role;
+            Guid assignedTenantId;
+            UserRole effectiveRole;
+
+            if (_tenantContext.CurrentTenantId.HasValue)
+            {
+                // Adding a user to an existing organization (Admin is doing this via Dashboard)
+                assignedTenantId = _tenantContext.CurrentTenantId.Value;
+                effectiveRole = role;
+            }
+            else
+            {
+                // Creating a new Tenant for a brand new public registration
+                var newTenant = new Tenant
+                {
+                    Id = Guid.NewGuid(),
+                    Name = $"{normalizedEmail}'s Organization",
+                    CreatedAt = DateTime.UtcNow,
+                    IsActive = true
+                };
+                _dbContext.Set<Tenant>().Add(newTenant);
+                assignedTenantId = newTenant.Id;
+
+                // The creator of a new organization is ALWAYS the Admin of it!
+                effectiveRole = UserRole.Admin;
+            }
 
             var user = new User
             {
@@ -50,7 +75,8 @@ namespace LogLens.Application.Services
                 PasswordHash = BCrypt.Net.BCrypt.HashPassword(password),
                 Role = effectiveRole,
                 CreatedAt = DateTime.UtcNow,
-                IsActive = true
+                IsActive = true,
+                TenantId = assignedTenantId
             };
 
             await users.AddAsync(user);
@@ -80,6 +106,21 @@ namespace LogLens.Application.Services
                 return Fail("Invalid credentials.");
             }
 
+            // Backwards compatibility for existing users who don't have a TenantId
+            if (!user.TenantId.HasValue)
+            {
+                var newTenant = new Tenant
+                {
+                    Id = Guid.NewGuid(),
+                    Name = $"{user.Email}'s Organization",
+                    CreatedAt = DateTime.UtcNow,
+                    IsActive = true
+                };
+                _dbContext.Set<Tenant>().Add(newTenant);
+                user.TenantId = newTenant.Id;
+                await _dbContext.SaveChangesAsync();
+            }
+
             var token = GenerateToken(user);
             return new AuthResult(true, token, user.Email, user.Role, null);
         }
@@ -107,6 +148,11 @@ namespace LogLens.Application.Services
                 new Claim(JwtRegisteredClaimNames.Email, user.Email),
                 new Claim(ClaimTypes.Role, user.Role.ToString())
             };
+
+            if (user.TenantId.HasValue)
+            {
+                claims.Add(new Claim("TenantId", user.TenantId.Value.ToString()));
+            }
 
             var token = new JwtSecurityToken(
                 issuer: issuer,

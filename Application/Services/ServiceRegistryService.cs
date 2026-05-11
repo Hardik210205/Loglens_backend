@@ -18,12 +18,14 @@ namespace LogLens.Application.Services
         private readonly IConfiguration _configuration;
         private readonly DbContext _dbContext;
         private readonly IApiKeyCipher _apiKeyCipher;
+        private readonly ITenantContext _tenantContext;
 
-        public ServiceRegistryService(IConfiguration configuration, DbContext dbContext, IApiKeyCipher apiKeyCipher)
+        public ServiceRegistryService(IConfiguration configuration, DbContext dbContext, IApiKeyCipher apiKeyCipher, ITenantContext tenantContext)
         {
             _configuration = configuration;
             _dbContext = dbContext;
             _apiKeyCipher = apiKeyCipher;
+            _tenantContext = tenantContext;
         }
 
         public async Task<CreateServiceResult> CreateServiceAsync(string name, string displayName, Guid ownerUserId)
@@ -60,7 +62,8 @@ namespace LogLens.Application.Services
                 DisplayName = normalizedDisplayName,
                 CreatedByUserId = ownerUserId,
                 CreatedAt = DateTime.UtcNow,
-                IsActive = true
+                IsActive = true,
+                TenantId = _tenantContext.CurrentTenantId
             };
 
             await services.AddAsync(service);
@@ -96,7 +99,8 @@ namespace LogLens.Application.Services
                 RawApiKeyCiphertext = _apiKeyCipher.Protect(rawApiKey),
                 Description = string.Empty,
                 CreatedAt = DateTime.UtcNow,
-                IsActive = true
+                IsActive = true,
+                TenantId = _tenantContext.CurrentTenantId
             };
 
             await apiKeys.AddAsync(apiKey);
@@ -160,11 +164,14 @@ namespace LogLens.Application.Services
                 return false;
             }
 
-            service.IsActive = false;
-            foreach (var apiKey in service.ApiKeys)
+            // Permanently remove associated API keys and the service record.
+            var apiKeys = _dbContext.Set<ApiKey>();
+            if (service.ApiKeys != null && service.ApiKeys.Any())
             {
-                apiKey.IsActive = false;
+                apiKeys.RemoveRange(service.ApiKeys);
             }
+
+            _dbContext.Set<Service>().Remove(service);
 
             await _dbContext.SaveChangesAsync();
             return true;

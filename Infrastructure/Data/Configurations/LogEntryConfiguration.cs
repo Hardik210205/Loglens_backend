@@ -13,7 +13,7 @@ namespace LogLens.Infrastructure.Data.Configurations
             builder.Property(l => l.Timestamp).IsRequired();
             builder.Property(l => l.Level).IsRequired();
             builder.Property(l => l.Message).IsRequired().HasMaxLength(2048);
-            builder.Property(l => l.Metadata).HasMaxLength(4000);
+            builder.Property(l => l.Metadata).HasColumnType("jsonb");
             builder.Property(l => l.ClusterId).HasMaxLength(64);
 
             builder.HasOne(l => l.Service)
