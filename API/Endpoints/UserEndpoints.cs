@@ -34,6 +34,13 @@ namespace LogLens.API.Endpoints
                 return deactivated ? Results.NoContent() : Results.NotFound();
             })
             .WithName("DeactivateUser");
+
+            group.MapDelete("/{id:guid}", async (Guid id, IUserManagementService userManagementService) =>
+            {
+                var deleted = await userManagementService.DeleteUserAsync(id);
+                return deleted ? Results.NoContent() : Results.BadRequest("Cannot delete the last admin or user not found.");
+            })
+            .WithName("DeleteUser");
         }
     }
 }

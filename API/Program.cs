@@ -140,10 +140,12 @@ builder.Services.AddSingleton<ILogSanitizer, LogSanitizer>();
 builder.Services.AddScoped<ILogAnalyticsService, LogAnalyticsService>();
 builder.Services.AddScoped<IRiskAnalysisService, RiskAnalysisService>();
 builder.Services.AddScoped<IIncidentService, IncidentService>();
+builder.Services.AddScoped<ITenantContext, TenantContext>();
 
 // background processing
 builder.Services.AddHostedService<LogBatchInserter>();
 builder.Services.AddHostedService<MlProcessingService>();
+builder.Services.AddHostedService<LogRetentionService>();
 
 var app = builder.Build();
 
@@ -172,8 +174,12 @@ app.UseSerilogRequestLogging();
 app.UseMiddleware<ExceptionMiddleware>();
 app.UseCors("AllowFrontend");
 app.UseMiddleware<ApiKeyMiddleware>();
+
 app.UseAuthentication();
 app.UseAuthorization();
+
+// TenantMiddleware MUST run AFTER Authentication so it can read the JWT claims!
+app.UseMiddleware<TenantMiddleware>();
 
 app.MapGet("/health", () => Results.Ok(new { status = "healthy", timestamp = DateTime.UtcNow }));
 app.MapHealthChecks("/health/detailed", new Microsoft.AspNetCore.Diagnostics.HealthChecks.HealthCheckOptions
@@ -210,17 +216,42 @@ static async Task ApplyMigrationsSafelyAsync(LogLensDbContext db)
 {
     var historyExists = await TableExistsAsync(db, "__EFMigrationsHistory");
     var incidentsExists = await TableExistsAsync(db, "incidents");
-    var logsExists = await TableExistsAsync(db, "logs");
-    var servicesExists = await TableExistsAsync(db, "services");
-    var usersExists = await TableExistsAsync(db, "users");
-    var apiKeysExists = await TableExistsAsync(db, "api_keys");
 
-    if (historyExists && incidentsExists && logsExists && servicesExists && usersExists && apiKeysExists)
+    if (incidentsExists)
     {
-        Console.WriteLine("[LogLens] Existing schema detected with empty migration history. Skipping migrations and continuing startup.");
-        return;
+        // The database schema exists. We need to make sure EF Core knows about the past migrations
+        // so it doesn't try to run InitialCreate again and crash.
+        if (!historyExists)
+        {
+            await db.Database.ExecuteSqlRawAsync(@"
+                CREATE TABLE ""__EFMigrationsHistory"" (
+                    ""MigrationId"" character varying(150) NOT NULL,
+                    ""ProductVersion"" character varying(32) NOT NULL,
+                    CONSTRAINT ""PK___EFMigrationsHistory"" PRIMARY KEY (""MigrationId"")
+                );
+            ");
+        }
+
+        // Dynamically get all migrations defined in the project
+        var allMigrations = db.Database.GetMigrations();
+        
+        // Filter out our newly created migration (it starts with a timestamp, so we check Contains)
+        var pastMigrations = allMigrations.Where(m => !m.Contains("MultiTenancy_And_JSONB"));
+
+        foreach (var migration in pastMigrations)
+        {
+            await db.Database.ExecuteSqlRawAsync($@"
+                INSERT INTO ""__EFMigrationsHistory"" (""MigrationId"", ""ProductVersion"")
+                SELECT '{migration}', '8.0.0'
+                WHERE NOT EXISTS (
+                    SELECT 1 FROM ""__EFMigrationsHistory"" WHERE ""MigrationId"" = '{migration}'
+                );
+            ");
+        }
     }
 
+    // Now it is perfectly safe to call Migrate(), because it will skip the past ones 
+    // and ONLY run the new MultiTenancy_And_JSONB migration!
     db.Database.Migrate();
 }
 

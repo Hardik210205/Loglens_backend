@@ -16,9 +16,9 @@ namespace LogLens.API.Endpoints
         {
             app.MapPost("/api/auth/register", async (RegisterRequest req, IAuthService authService, LogLensDbContext dbContext, HttpContext context) =>
             {
-                var hasAnyUsers = await dbContext.Users.AnyAsync();
-
-                if (hasAnyUsers && !HasAdminClaim(context.User))
+                // If the user is logged in, they MUST be an Admin to create another user in their organization.
+                // If they are NOT logged in, we allow it so they can create a brand new Organization.
+                if (context.User?.Identity?.IsAuthenticated == true && !HasAdminClaim(context.User))
                 {
                     return Results.StatusCode(StatusCodes.Status403Forbidden);
                 }
